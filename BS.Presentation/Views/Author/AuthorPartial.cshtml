@@ -1,0 +1,13 @@
+﻿@using BS.Model;
+@model List<Author>
+
+<div class="categories">
+    <ul>
+        <h3 class="text-center"><em class="fa fa-user">&nbsp;</em>Tác giả</h3>
+        @foreach (var item in Model)
+        {
+            <li><a href="@Url.Action("BookBaseOnAuthor","Author",new { @authorId = item.AuthorId})">@item.Name</a></li>
+        }
+        <li><a href="@Url.Action("ListAllAuthor","Author")">Tác giả khác</a></li>
+    </ul>
+</div>

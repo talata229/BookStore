@@ -1,0 +1,14 @@
+﻿@using BS.Model;
+@model List<Publisher>
+
+<div class="col_1_of_4 span_1_of_4">
+    <h4>Nhà xuất bản</h4>
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li><a href="@Url.Action("BookBaseOnPublisher","Publisher",new { @publisherId = item.PublisherId})">@item.Name</a></li>
+        }
+
+    </ul>
+</div>
+

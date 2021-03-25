@@ -1,0 +1,389 @@
+﻿@model PagedList.IPagedList<BS.Model.Publisher>
+@using PagedList.Mvc;
+@*<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />*@
+
+@{
+    ViewBag.Title = "Publishers";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2 class="text-center">Publisher</h2>
+
+<p>
+    <input type="button" value="Create Publisher" id="btnCreate" class="btn btn-success" />
+</p>
+@using (Html.BeginForm("Index", "Publisher", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+<br />
+<table class="table table-bordered table-responsive">
+    <tr>
+        <th>
+            @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter }, new { @class = "col-md-2" })
+        </th>
+        <th class="col-md-4">
+            Introduction
+        </th>
+        <th class="col-md-2">
+            @Html.ActionLink("Address", "Index", new { sortOrder = ViewBag.AddressParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th class="col-md-1">Phone</th>
+        <th class="col-md-3"></th>
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-justify">
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td class="text-justify">
+                @Html.DisplayFor(model => item.Introduction)
+            </td>
+            <td class="">
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td class="text-justify">
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td class="text-justify">
+                <a href="#" class="btn btn-primary" onclick="Edit(@item.PublisherId)"><i class="far fa-edit"></i> Edit</a>
+                <a href="#" class="btn btn-danger" onclick="Delete(@item.PublisherId)"><i class="far fa-trash-alt"></i> Delete</a>
+                <a href="#" class="btn btn-info" onclick="Detail(@item.PublisherId)"><i class="fas fa-info-circle"></i> Detail</a>
+            </td>
+        </tr>
+
+        <div class="modal fade rotate" id="myModalEditPublisher_@item.PublisherId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="modal-title text-center">Edit Publisher: @item.Name</h2>
+                    </div>
+                    <div class="container"></div>
+                    <div class="modal-body" id="myBodyEdit_@item.PublisherId">
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Name Publisher</span>
+                            <input class="col-sm-8" type="text" value="@item.Name" id="publisherNameEdit_@item.PublisherId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="publisherNameEditError_@item.PublisherId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Introduction</span>
+                            @*<input  value="@item.BirthDate" id="birthDateHidden" />*@
+                            <input class="col-sm-8" type="text" value="@item.Introduction" id="introductionEdit_@item.PublisherId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="introductionEditError" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Address</span>
+                            <input class="col-sm-8" type="text" value="@item.Address" id="addressEdit_@item.PublisherId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="addressEditError_@item.PublisherId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Phone</span>
+                            <input class="col-sm-8" type="text" value="@item.Phone" id="phoneEdit_@item.PublisherId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="phoneEditError_@item.PublisherId" style="color:red"></span>
+                        </div>
+                        <br />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="btnConfirmEditPublisher_@item.PublisherId">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="modal fade rotate" id="myModalDeletePublisher_@item.PublisherId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="modal-title text-center">Delete Publisher: @item.Name</h2>
+
+                    </div>
+                    <div class="container"></div>
+                    <div class="modal-body" id="myBodyDelete_@item.PublisherId">
+                        <h3>Do you want to delete Publisher = @item.Name</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="btnConfirmDeletePublisher_@item.PublisherId">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="myModalDetailPublisher_@item.PublisherId" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="modal-title text-center">Detail about Publisher: @item.Name</h2>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Name Publisher</span>
+                            <input class="col-sm-8" type="text" value="@item.Name" id="publisherNameDetail_@item.PublisherId" disabled />
+                        </div>
+                        <br />
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Introduction</span>
+                            <input class="col-sm-8" type="text" value="@item.Introduction)" id="introductionDetail_@item.Introduction" disabled />
+                        </div>
+                        <br />
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Address</span>
+                            <input class="col-sm-8" type="text" value="@item.Address" id="addressDetail_@item.Address" disabled />
+                        </div>
+                        <br />
+                        <br />
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Phone</span>
+                            <input class="col-sm-8" type="text" value="@item.Phone" id="phoneDetail_@item.PublisherId" disabled />
+                        </div>
+                        <br />
+                        <br />
+
+                     
+                        <br />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    }
+
+</table>
+<br />
+<div class="text-center">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>
+
+<div class="modal fade rotate" id="myModalCreate">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title text-center">Create Publisher</h2>
+
+            </div>
+            <div class="container"></div>
+            <div class="modal-body" id="myBodyCreate">
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Name Publisher</span>
+                    <input class="col-sm-8" type="text" value="" id="publisherName" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8 " id="publisherNameError" style="color:red"></span>
+                </div>
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Introduction</span>
+                    <input  class="col-sm-8" type="text" value="" id="introduction"/>
+                    @*<textarea class="col-sm-8" type="text" value="" id="introduction" rows="4"></textarea>*@
+                </div>
+                <br />
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="introductionError" style="color:red"></span>
+                </div>
+                <br />
+                <br />
+
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Address</span>
+                    <input class="col-sm-8" type="text" value="" id="address" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="addressError" style="color:red"></span>
+                </div>
+                <br />
+
+
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Phone</span>
+                    <input class="col-sm-8" type="text" value="" id="phone" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="phoneError" style="color:red"></span>
+                </div>
+                <br />
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btnCreatePublisher">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $("#btnCreate").click(function () {
+            $("#myModalCreate").modal("show");
+            $("#btnCreatePublisher").click(function () {
+                //Lấy dữ liệu để gửi
+                var name = $("#publisherName").val();
+                var introduction = $("#introduction").val();
+                var address = $("#address").val();
+                var phone = $("#phone").val();
+                //Check dữ liệu
+                if (name == "") {
+                    $("#publisherNameError").html("Name can't be empty!");
+                    return;
+
+                }
+                $.ajax({
+                    type: "Post",
+                    url: "/Admin/Publisher/Create",
+                    data: { name: name, introduction: introduction, address: address, phone: phone },
+                    success: function (response) {
+                        if (response == "successful") {
+                            $("#myModalCreate").modal("hide");
+                            alert("Insert successfully");
+                            window.location.href = "/Admin/Publisher/Index"
+                        } else {
+                            $("#myModalCreate").modal("hide");
+                            alert("Insert failed");
+                            window.location.href = "/Admin/Publisher/Index"
+                        }
+
+                    }
+                });
+            });
+        });
+
+    });
+
+    function Edit(publisherId) {
+        $("#myModalEditPublisher_" + publisherId).modal("show");
+        $("#btnConfirmEditPublisher_" + publisherId).click(function () {
+            name = $("#publisherNameEdit_" + publisherId).val();
+            introduction = $("#introductionEdit_" + publisherId).val();
+            address = $("#addressEdit_" + publisherId).val();
+            phone = $("#phoneEdit_" + publisherId).val();
+            $.ajax({
+                type: "Post",
+                url: "/Admin/Publisher/Edit",
+                data: {
+                    publisherId: publisherId,
+                    name: name,
+                    introduction: introduction,
+                    address: address,
+                    phone: phone,
+                },
+                success: function (response) {
+                    if (response == "successful") {
+                        alert("Edit successfully");
+                        $("#myModalEditPublisher_" + publisherId).modal("hide");
+                        window.location.href = "/Admin/Publisher/Index";
+                    } else {
+                        $("#myModalEditPublisher_" + publisherId).modal("hide");
+                        alert("Edit failed");
+                    }
+                }
+            })
+        });
+    }
+
+    function Delete(publisherId) {
+        $("#myModalDeletePublisher_" + publisherId).modal("show");
+        $("#btnConfirmDeletePublisher_" + publisherId).click(function () {
+            $.ajax({
+                type: "Post",
+                url: "/Admin/Publisher/Delete",
+                data: {
+                    publisherId: publisherId,
+                },
+                success: function (response) {
+                    if (response == "successful") {
+                        alert("Delete successfully");
+                        $("#myModalDeletePublisher_" + publisherId).modal("hide");
+                        window.location.href = "/Admin/Publisher/Index";
+                    } else {
+                        $("#myModalDeletePublisher_" + publisherId).modal("hide");
+                        alert("Delete failed");
+                    }
+                }
+            })
+        });
+    }
+
+
+    function Detail(publisherId) {
+        $("#myModalDetailPublisher_" + publisherId).modal("show");
+    }
+
+</script>

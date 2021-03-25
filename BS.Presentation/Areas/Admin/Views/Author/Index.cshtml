@@ -1,0 +1,443 @@
+﻿@model PagedList.IPagedList<BS.Model.Author>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Authors";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2 class="text-center">Author</h2>
+
+<p>
+    <input type="button" value="Create Author" id="btnCreate" class="btn btn-success" />
+</p>
+@using (Html.BeginForm("Index", "Author", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>
+            @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("BirthDate", "Index", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Adress", "Index", new { sortOrder = ViewBag.AddressParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>Introduction</th>
+        <th>Phone</th>
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.BirthDate)*@
+                @*@Html.DisplayFor(modelItem => item.BirthDate, "{0:MM/dd/yyyy}", new { disabled = "true" })*@
+                @Html.ValueFor(model => item.BirthDate, "{0:MM/dd/yyyy}")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Introduction)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                <a href="#" class="btn btn-primary" onclick="Edit(@item.AuthorId)"><i class="far fa-edit"></i> Edit</a>
+                <a href="#" class="btn btn-danger" onclick="Delete(@item.AuthorId)"><i class="far fa-trash-alt"></i> Delete</a>
+                <a href="#" class="btn btn-info" onclick="Detail(@item.AuthorId)"><i class="fas fa-info-circle"></i> Detail</a>
+            </td>
+        </tr>
+
+        <div class="modal fade rotate" id="myModalEditAuthor_@item.AuthorId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="modal-title text-center">Edit Author: @item.Name</h2>
+                    </div>
+                    <div class="container"></div>
+                    <div class="modal-body" id="myBodyEdit_@item.AuthorId">
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Name Author</span>
+                            <input class="col-sm-8" type="text" value="@item.Name" id="authorNameEdit_@item.AuthorId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="authorNameEditError_@item.AuthorId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">BirthDate</span>
+                            <input class="col-sm-8" type="date" value="@item.BirthDate.ToString(string.Format("yyyy-MM-dd"))" id="birthDateEdit_@item.AuthorId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="birthDateEditError" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Address</span>
+                            <input class="col-sm-8" type="text" value="@item.Address" id="addressEdit_@item.AuthorId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="addressEditError_@item.AuthorId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Introduction</span>
+                            <input class="col-sm-8" type="text" value="@item.Introduction" id="introductionEdit_@item.AuthorId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="introductionEditError_@item.AuthorId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Phone</span>
+                            <input class="col-sm-8" type="text" value="@item.Phone" id="phoneEdit_@item.AuthorId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="phoneEditError_@item.AuthorId" style="color:red"></span>
+                        </div>
+                        <br />
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="btnConfirmEditAuthor_@item.AuthorId">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="modal fade rotate" id="myModalDeleteAuthor_@item.AuthorId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="modal-title text-center">Delete Author: @item.Name</h2>
+
+                    </div>
+                    <div class="container"></div>
+                    <div class="modal-body" id="myBodyDelete_@item.AuthorId">
+                        <h3>Do you want to delete AuthorName = @item.Name</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="btnConfirmDeleteAuthor_@item.AuthorId">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="myModalDetailAuthor_@item.AuthorId" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="modal-title text-center">Detail about Author: @item.Name</h2>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Name Author</span>
+                            <input class="col-sm-8" type="text" value="@item.Name" id="authorNameEdit_@item.AuthorId" disabled/>
+                        </div>
+                        <br />
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">BirthDate</span>
+                            <input class="col-sm-8" type="date" value="@item.BirthDate.ToString(string.Format("yyyy-MM-dd"))" id="birthDateDetail_@item.AuthorId" disabled/>
+                        </div>
+                        <br />
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Address</span>
+                            <input class="col-sm-8" type="text" value="@item.Address" id="addressDetail_@item.AuthorId" disabled/>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Introduction</span>
+                            <input class="col-sm-8" type="text" value="@item.Introduction" id="introductionDetail_@item.AuthorId" disabled/>
+                        </div>
+                        <br />
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Phone</span>
+                            <input class="col-sm-8" type="text" value="@item.Phone" id="phoneDetail_@item.AuthorId" disabled/>
+                        </div>
+                        <br />
+                        <br />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    }
+
+</table>
+<br />
+<div class="text-center">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>
+
+<div class="modal fade rotate" id="myModalCreate">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title text-center">Create Author</h2>
+
+            </div>
+            <div class="container"></div>
+            <div class="modal-body" id="myBodyCreate">
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Name Author</span>
+                    <input class="col-sm-8" type="text" value="" id="authorName" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="authorNameError" style="color:red"></span>
+                </div>
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">BirthDate</span>
+                    <input class="col-sm-8" type="date" value="" id="birthDate" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="birthDateError" style="color:red"></span>
+                </div>
+                <br />
+
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Address</span>
+                    <input class="col-sm-8" type="text" value="" id="address" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="addressError" style="color:red"></span>
+                </div>
+                <br />
+
+
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Introduction</span>
+                    <input class="col-sm-8" type="text" value="" id="introduction" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="introductionError" style="color:red"></span>
+                </div>
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Phone</span>
+                    <input class="col-sm-8" type="text" value="" id="phone" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="phoneError" style="color:red"></span>
+                </div>
+                <br />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btnCreateAuthor">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $("#btnCreate").click(function () {
+            $("#myModalCreate").modal("show");
+            $("#btnCreateAuthor").click(function () {
+                //Lấy dữ liệu để gửi
+                var name = $("#authorName").val();
+                var birthDate = $("#birthDate").val();
+                var address = $("#address").val();
+                var introduction = $("#introduction").val();
+                var phone = $("#phone").val();
+                //Check dữ liệu
+                if (name == "") {
+                    $("#authorNameError").html("Name can't be empty!");
+                    return;
+
+                }
+                $.ajax({
+                    type: "Post",
+                    url: "/Admin/Author/Create",
+                    data: { name: name, birthDate: birthDate, address: address, birthDate: birthDate, introduction: introduction, phone: phone },
+                    success: function (response) {
+                        if (response == "successful") {
+                            $("#myModalCreate").modal("hide");
+                            alert("Insert successfully");
+                            window.location.href = "/Admin/Author/Index"
+                        } else {
+                            $("#myModalCreate").modal("hide");
+                            alert("Insert failed");
+                            window.location.href = "/Admin/Author/Index"
+                        }
+
+                    }
+                });
+            });
+        });
+
+    });
+
+    function Edit(AuthorId) {
+        $("#myModalEditAuthor_" + AuthorId).modal("show");
+        $("#btnConfirmEditAuthor_" + AuthorId).click(function () {
+            name = $("#authorNameEdit_" + AuthorId).val();
+            birthDate = $("#birthDateEdit_" + AuthorId).val();
+            address = $("#addressEdit_" + AuthorId).val();
+            introduction = $("#introductionEdit_" + AuthorId).val();
+            phone = $("#phoneEdit_" + AuthorId).val();
+            $.ajax({
+                type: "Post",
+                url: "/Admin/Author/Edit",
+                data: {
+                    AuthorId: AuthorId,
+                    name: name,
+                    birthDate: birthDate,
+                    address: address,
+                    introduction: introduction,
+                    phone: phone,
+                },
+                success: function (response) {
+                    if (response == "successful") {
+                        alert("Edit successfully");
+                        $("#myModalEditAuthor_").modal("hide");
+                        window.location.href = "/Admin/Author/Index";
+                    } else {
+                        $("#myModalEditAuthor_").modal("hide");
+                        alert("Edit failed");
+                    }
+                }
+            })
+        });
+    }
+
+    function Delete(AuthorId) {
+        $("#myModalDeleteAuthor_" + AuthorId).modal("show");
+        $("#btnConfirmDeleteAuthor_" + AuthorId).click(function () {
+            $.ajax({
+                type: "Post",
+                url: "/Admin/Author/Delete",
+                data: {
+                    AuthorId: AuthorId,
+                },
+                success: function (response) {
+                    if (response == "successful") {
+                        alert("Delete successfully");
+                        $("#myModalDeleteAuthor_").modal("hide");
+                        window.location.href = "/Admin/Author/Index";
+                    } else {
+                        $("#myModalDeleteAuthor_").modal("hide");
+                        alert("Delete failed");
+                    }
+                }
+            })
+        });
+    }
+
+
+    function Detail(AuthorId) {
+        $("#myModalDetailAuthor_" + AuthorId).modal("show");
+        $("#btnConfirmDeleteAuthor_" + AuthorId).click(function () {
+            $.ajax({
+                type: "Post",
+                url: "/Admin/Author/Delete",
+                data: {
+                    AuthorId: AuthorId,
+                },
+                success: function (response) {
+                    if (response == "successful") {
+                        alert("Delete successfully");
+                        $("#myModalDeleteAuthor_").modal("hide");
+                        window.location.href = "/Admin/Author/Index";
+                    } else {
+                        $("#myModalDeleteAuthor_").modal("hide");
+                        alert("Delete failed");
+                    }
+                }
+            })
+        });
+    }
+
+
+
+
+</script>

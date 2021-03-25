@@ -1,0 +1,278 @@
+﻿<div class="headertop_desc">
+    <div class="call">
+        <p><span>Need help?</span> call us <span class="number">1-22-3456789</span></p>
+    </div>
+    <div class="account_desc">
+        @if (Session["UserLogin"] != null)
+        {
+            <li id="userNameLogin">Hello: <span style="color:red;">@Session["UserLogin"]</span></li>
+            @*<li>@Html.ActionLink("Logoaut", "Logout", "User", new { Area = "Customer" })</li>*@
+            <li><a href="/Customer/User/Logout">Logout</a></li>
+        }
+        else
+        {
+            <span id="btnRegister">Register</span>
+            <span>|</span>
+            <span id="btnLogin">Login</span>
+        }
+    </div>
+    <div class="clear"></div>
+</div>
+
+<div class="modal fade rotate" id="myModalRegister">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title text-center">Register User</h2>
+
+            </div>
+            <div class="container"></div>
+            <div class="modal-body" id="myBodyRegister">
+                @* UserName *@
+                <div class="col-sm-12">
+                    <span class="col-sm-4">UserName <span style="color:red;">*</span></span>
+                    <input class="col-sm-8" type="text" value="" id="userName" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8 " id="userNameError" style="color:red"></span>
+                </div>
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Password <span style="color:red;">*</span></span>
+                    <input class="col-sm-8" type="text" value="" id="password" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8 " id="passwordError" style="color:red"></span>
+                </div>
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Full Name</span>
+                    <input class="col-sm-8" type="text" value="" id="fullName" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8 " id="fullNameError" style="color:red"></span>
+                </div>
+                <br />
+
+
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Date of birth <span style="color:red;">*</span></span>
+                    <input class="col-sm-8" type="date" value="" id="dateOfBirth" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="dateOfBirthError" style="color:red"></span>
+                </div>
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Gender</span>
+                    <select id="gender" class="col-sm-8">
+                        <option value="1">Male</option>
+                        <option value="0">Female</option>
+                        <option value="2">Other</option>
+                    </select>
+                </div>
+                <br />
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Phone Number</span>
+                    <input class="col-sm-8" type="text" value="" id="phoneNumber" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8 " id="phoneNumberError" style="color:red"></span>
+                </div>
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Email</span>
+                    <input class="col-sm-8" type="text" value="" id="email" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8 " id="emailError" style="color:red"></span>
+                </div>
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Address</span>
+                    <input class="col-sm-8" type="text" value="" id="address" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8 " id="addressError" style="color:red"></span>
+                </div>
+                <br />
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmRegsiter">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade rotate" id="myModalLogin">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title text-center">Login User</h2>
+
+            </div>
+            <div class="container"></div>
+            <div class="modal-body" id="myBodyLogin">
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">UserName <span style="color:red;">*</span></span>
+                    <input class="col-sm-8" type="text" value="" id="userNameLogin" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8 " id="userNameLoginError" style="color:red"></span>
+                </div>
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Password <span style="color:red;">*</span></span>
+                    <input class="col-sm-8" type="text" value="" id="passwordLogin" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8 " id="passwordLoginError" style="color:red"></span>
+                </div>
+                <br />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmLogin">Login</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#btnRegister").click(function () {
+            $("#myModalRegister").modal("show");
+            $("#btnConfirmRegsiter").click(function () {
+                var userName = $("#userName").val();
+                var password = $("#password").val();
+                var name = $("#fullName").val();
+                var dateOfBirth = $("#dateOfBirth").val();
+                var gender = $("#gender").val();
+                var phoneNumber = $("#phoneNumber").val();
+                var email = $("#email").val();
+                var address = $("#address").val();
+                //Check dữ liệu
+                if (userName == "") {
+                    $("#userNameError").html("UserName can't be empty!");
+                    return;
+                }
+                if (password == "") {
+                    $("#passwordError").html("Password can't be empty!");
+                    return;
+                }
+                if (dateOfBirth == "") {
+                    $("#dateOfBirthError").html("Enter your date of birth");
+                    return;
+                }
+                $.ajax({
+                    type: "Post",
+                    url: "/Customer/User/Register",
+                    data: { userName: userName, password: password, name: name, dateOfBirth: dateOfBirth, gender: gender, phoneNumber: phoneNumber, email: email, address: address },
+                    success: function (response) {
+                        $("#myModalRegister").modal("hide");
+                        if (response == "successful") {
+                            alert("Register successfully");
+                            window.location.href = "/Home/Index"
+                        } else {
+                            alert("Register failed");
+                            window.location.href = "/Home/Index"
+                        }
+
+                    }
+                });
+            });
+        });
+
+        $("#btnLogin").click(function () {
+            $("#myModalLogin").modal("show");
+            $("#btnConfirmLogin").click(function () {
+                var userNameLogin = $("#userNameLogin").val();
+                var passwordLogin = $("#passwordLogin").val();
+                //Check dữ liệu
+                if (userNameLogin == "") {
+                    $("#userNameLoginError").html("UserName can't be empty!");
+                    return;
+                }
+                if (passwordLogin == "") {
+                    $("#passwordLoginError").html("Password can't be empty!");
+                    return;
+                }
+                $.ajax({
+                    type: "Post",
+                    url: "/Customer/User/Login",
+                    data: { userName: userNameLogin, password: passwordLogin },
+                    success: function (response) {
+                        if (response == "LoginAdmin") {          //LoginAdmin
+                            $("#myModalLogin").modal("hide");
+                            alert("Login Admin successfully");
+                            window.location.href = "/Admin/Home/Index"
+                        } else if (response == "LoginCustomer") {       //LoginCustomer
+                            $("#myModalLogin").modal("hide");
+                            alert("Login Customer successfully");
+                            window.location.href = "/Home/Index"
+                        } else if (response == "Not exist accouunt") {           //Not exist accouunt
+                            $("#myModalLogin").modal("hide");
+                            alert("Not exist account");
+                            window.location.href = "/Home/Index"
+                        } else if (response == "Account is locked") {               //Account is locked
+                            $("#myModalLogin").modal("hide");
+                            alert("Account is locked");
+                            window.location.href = "/Home/Index"
+                        } else {                                                        //Wrong password
+                            $("#myModalLogin").modal("hide");
+                            alert("Wrong password");
+                            window.location.href = "/Customer/Home/Index"
+                        }
+
+
+                    }
+                });
+            });
+        });
+
+    });
+
+</script>

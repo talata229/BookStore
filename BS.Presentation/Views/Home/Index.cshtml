@@ -1,0 +1,185 @@
+﻿@using BS.Model;
+@using PagedList.Mvc;
+@model PagedList.PagedList<Book>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="section group">
+    <h1 class="text-center">Danh mục toàn bộ sách</h1>
+    @foreach (var item in Model)
+    {
+        <div class="grid_1_of_4 images_1_of_4">
+            <a href="@Url.Action("DetailBook","Book",new {@bookId = item.BookId })"><img src="@Url.Content("~/ImagesBook/"+item.Image)" alt=""></a>
+            @if (item.Title.Length > 40)
+            {
+                <h2>@item.Title.Substring(0, 40) ...</h2>
+            }
+            else
+            {
+
+                <h2>@item.Title</h2>
+            }
+
+            <div class="price-details">
+                <div class="price-number">
+                    <p><span class="rupees">@string.Format("{0:0,0}", item.Price) đ</span></p>
+                </div>
+                <div class="add-cart">
+                    <h4><a style="font-size:18px;" href="@Url.Action("AddToCart","Cart", new { @bookId = item.BookId, @url = Request.Url.ToString() })">Mua sách</a></h4>
+                    @*<h4><a href="preview.html">Add to Cart</a></h4>*@
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    }
+
+</div>
+<div class="text-center">
+    Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)/@Model.PageCount
+    <div class="MenuTrang">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }))
+    </div>
+</div>
+@*@section Slider{
+    <div id="slider" class="nivoSlider">
+        <img src="~/assets/client/NivoSlider/Images/Anh1.jpg" />
+        <img src="~/assets/client/NivoSlider/Images/Anh2.jpg" />
+        <img src="~/assets/client/NivoSlider/Images/Anh3.jpg" />
+    </div>
+    }
+
+    <link href="~/assets/client/NivoSlider/nivo-slider.css" rel="stylesheet" />
+    <script src="~/assets/client/NivoSlider/jquery.nivo.slider.js"></script>
+    <script src="~/assets/client/NivoSlider/jquery.nivo.slider.pack.js"></script>*@
+@*<script type="text/javascript">
+        $(window).load(function () {
+            $('#slider').nivoSlider({
+                controlNav: false,
+                nextText: '',
+                prevText: ''
+            });
+        });
+    </script>*@
+
+@section Slider{
+    <div id="slideBox" class="slideBox">
+        <div class="hd">
+            <ul><li>1</li><li>2</li><li>3</li></ul>
+        </div>
+        <div class="bd">
+            <ul>
+                <li><a href="#"><img src="~/assets/client/SuperSlide/images/Anh1.jpg" width="886px" /></a></li>
+                <li><a href="#"><img src="~/assets/client/SuperSlide/images/Anh2.jpg" width="886px"/></a></li>
+            </ul>
+        </div>
+
+
+        <a class="prev" href="javascript:void(0)"></a>
+        <a class="next" href="javascript:void(0)"></a>
+
+    </div>
+
+
+    <style type="text/css">
+
+        .slideBox {
+            /*width: 450px;*/
+            /*height: 230px;*/
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #ddd;
+        }
+
+            .slideBox .hd {
+                height: 15px;
+                overflow: hidden;
+                position: absolute;
+                right: 5px;
+                bottom: 5px;
+                z-index: 1;
+            }
+
+                .slideBox .hd ul {
+                    overflow: hidden;
+                    zoom: 1;
+                    float: left;
+                }
+
+                    .slideBox .hd ul li {
+                        float: left;
+                        margin-right: 2px;
+                        width: 15px;
+                        height: 15px;
+                        line-height: 14px;
+                        text-align: center;
+                        background: #fff;
+                        cursor: pointer;
+                    }
+
+                        .slideBox .hd ul li.on {
+                            background: #f00;
+                            color: #fff;
+                        }
+
+            .slideBox .bd {
+                position: relative;
+                height: 100%;
+                z-index: 0;
+            }
+
+                .slideBox .bd li {
+                    zoom: 1;
+                    vertical-align: middle;
+                }
+
+                .slideBox .bd img {
+                    /*width: 450px;
+                    height: 230px;*/
+                    display: block;
+                }
+
+            .slideBox .prev,
+            .slideBox .next {
+                position: absolute;
+                left: 3%;
+                top: 50%;
+                margin-top: -25px;
+                display: block;
+                width: 32px;
+                height: 40px;
+                background: url('../../assets/client/SuperSlide/images/slider-arrow.png') -110px 5px no-repeat;
+
+                filter: alpha(opacity=50);
+                opacity: 0.5;
+            }
+
+            .slideBox .next {
+                left: auto;
+                right: 3%;
+                background-position: 8px 5px;
+            }
+
+                .slideBox .prev:hover,
+                .slideBox .next:hover {
+                    filter: alpha(opacity=100);
+                    opacity: 1;
+                }
+
+            .slideBox .prevStop {
+                display: none;
+            }
+
+            .slideBox .nextStop {
+                display: none;
+            }
+    </style>
+    <script type="text/javascript">
+        jQuery(".slideBox").slide({ mainCell: ".bd ul", effect: "leftLoop", autoPlay: true, trigger: "mouseover", delayTime: 700, mouseOverStop: false, pnLoop: true });
+    </script>
+
+}

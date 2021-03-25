@@ -1,0 +1,51 @@
+﻿@using BS.Model
+@model Book
+@{
+    ViewBag.Title = "DetailBook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center text-info">Thông tin về sách</h2>
+<hr/>
+<div class="cont-desc span_1_of_2">
+    <div class="product-details">
+        <div class="grid images_3_of_2">
+            <div id="container">
+                <div id="products_example">
+                    <div id="products">
+                        <div class="slides_container" style="overflow: hidden; position: relative; display: block;">
+                            <div class="slides_control" style="position: relative; width: 1098px; height: 274px; left: -366px;">
+                                <a href="#" target="_blank" style="position: absolute; top: 0px; left: 366px; z-index: 5;">
+                                    <img src="@Url.Content("~/ImagesBook/"+Model.Image)" alt=" ">
+                                </a>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="desc span_3_of_2">
+            <h1 class="text-danger text-center" style="margin-top:0px;">@Model.Title</h1>
+            <h3><i class="fa fa-arrow-circle-o-right"></i> Nhà xuất bản: @Model.Publisher.Name</h3>
+            <h3><i class="fa fa-arrow-circle-o-right"></i> Chủ đề: @Model.Category.Name</h3>
+            <h3><i class="fa fa-arrow-circle-o-right"></i> Tác giả: @Model.Author.Name</h3>
+            <h3><i class="fa fa-arrow-circle-o-right"></i> Số lượng trong kho: @Model.Stock</h3>
+            @if (Model.IsNew)
+            {
+                <h3><i class="fa fa-arrow-circle-o-right"></i> Sách mới ra</h3>
+            }
+            <hr />
+            <h4>Giới thiệu: @Model.Description</h4>
+            <div class="price">
+                <h4>Giá: <span class="text-danger">@string.Format("{0:0,0}", Model.Price) đ</span></h4>
+            </div>
+
+            <div class="share-desc">
+                <div class="button"><span><a href="@Url.Action("AddToCart","Cart", new { @bookId = Model.BookId, @url = Request.Url.ToString() })">Thêm vào giỏ hàng</a></span></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+﻿@using BS.Model
+@model List<Category>
+@{
+    ViewBag.Title = "Danh mục chủ đề";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<h2 class="text-center text-primary">Danh sách toàn bộ tác giả </h2>
+<div class="col-md-12">
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th class="text-center text-danger">Tên chủ đề</th>
+            <th class="text-center text-danger">Mô tả</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><a style="color:blue;" href="@Url.Action("BookBaseOnCategory","Category",new { @categoryId = item.CategoryId})">@item.Name</a></td>
+                <td>@item.Description</td>
+            </tr>
+        }
+    </table>
+</div>
+

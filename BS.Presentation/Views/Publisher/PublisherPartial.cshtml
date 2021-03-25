@@ -1,0 +1,13 @@
+﻿@using BS.Model;
+@model List<Publisher>
+
+<div class="categories">
+    <ul>
+        <h3 class="text-center"><em class="fa fa-upload">&nbsp;</em>Nhà xuất bản</h3>
+        @foreach (var item in Model)
+        {
+            <li><a href="@Url.Action("BookBaseOnPublisher","Publisher",new { @publisherId = item.PublisherId})">@item.Name</a></li>
+        }
+        <li><a href="@Url.Action("ListAllPublisher","Publisher")">Nhà xuất bản khác</a></li>
+    </ul>
+</div>

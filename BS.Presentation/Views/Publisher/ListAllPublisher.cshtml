@@ -1,0 +1,30 @@
+﻿@using BS.Model
+@model List<Publisher>
+@{
+    ViewBag.Title = "Danh mục nhà xuất bản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<h2 class="text-center text-primary">Danh sách toàn bộ nhà xuất bản</h2>
+<div class="col-md-12">
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th class="text-center text-danger col-md-3 text-center">Tên nhà xuất bản</th>
+            <th class="text-center text-danger col-md-5 text-center">Giới thiệu</th>
+            <th class="text-center text-danger col-md-3 text-center">Địa chỉ</th>
+            <th class="text-center text-danger col-md-1 text-center">Điện thoại</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><a style="color:blue;" href="@Url.Action("BookBaseOnPublisher","Publisher",new { @publisherId = item.PublisherId})">@item.Name</a></td>
+                <td style="text-align:justify">@item.Introduction</td>
+                <td style="text-align:justify">@item.Address</td>
+                <td>@item.Phone</td>
+            </tr>
+        }
+    </table>
+</div>
+

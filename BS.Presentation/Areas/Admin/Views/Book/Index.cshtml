@@ -1,0 +1,627 @@
+﻿@model PagedList.IPagedList<BS.Model.Book>
+@using PagedList.Mvc;
+@using BS.Model;
+
+@{
+    ViewBag.Title = "Books";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    //List<Author> listAuthor = ViewBag.AllAuthor;
+    var s = "";
+}
+
+
+<h2 class="text-center">Book</h2>
+
+<p>
+    <input type="button" value="Create Book" id="btnCreate" class="btn btn-success" />
+</p>
+@using (Html.BeginForm("Index", "Book", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+<br />
+<table class="table table-bordered table-responsive">
+    <tr>
+        <th>
+            @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TitleSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Price", "Index", new { sortOrder = ViewBag.PriceSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            Description
+        </th>
+        <th class="col-md-1">Date Of Update</th>
+        <th class="col-md-1">Image</th>
+        <th class="col-md-1">Stock</th>
+        <th class="col-md-1">Author</th>
+        <th class="col-md-1">Category</th>
+        <th class="col-md-1">Publisher</th>
+        <th class="col-md-1">Is new</th>
+        <th class="col-md-1"></th>
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td class="text-justify">
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td class="text-justify">
+            @Html.DisplayFor(model => item.Price)
+        </td>
+        <td class="">
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td class="text-justify">
+            @Html.ValueFor(modelItem => item.DateOfUpdate, "{0:MM/dd/yyyy}")
+        </td>
+        <td class="text-justify">
+            <img src="@Url.Content("~/ImagesBook/"+item.Image)" width="50" height="75" />
+        </td>
+
+        <td class="text-justify">
+            @Html.DisplayFor(modelItem => item.Stock)
+        </td>
+        <td class="text-justify">
+            @Html.DisplayFor(modelItem => item.Author.Name)
+        </td>
+
+        <td class="text-justify">
+            @Html.DisplayFor(modelItem => item.Category.Name)
+        </td>
+        <td class="text-justify">
+            @Html.DisplayFor(modelItem => item.Publisher.Name)
+        </td>
+        <td class="text-justify">
+            @Html.DisplayFor(modelItem => item.IsNew)
+        </td>
+        <td class="text-justify">
+            <a href="#" class="btn btn-primary" onclick="Edit(@item.BookId)"><i class="far fa-edit"></i> Edit</a>
+            <a href="#" class="btn btn-danger" onclick="Delete(@item.BookId)"><i class="far fa-trash-alt"></i> Delete</a>
+        </td>
+        @*<td class="text-justify">
+            @foreach (var par in item.Participations)
+            {
+                <p>@par.Author.Name, </p>
+            }
+        </td>*@
+    </tr>
+
+        <div class="modal fade rotate" id="myModalEditBook_@item.BookId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="modal-title text-center">Edit Book: @item.Title</h2>
+                    </div>
+                    <div class="container"></div>
+                    <div class="modal-body" id="myBodyEdit_@item.BookId">
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Title</span>
+                            <input class="col-sm-8" type="text" value="@item.Title" id="titleEdit_@item.BookId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="titleEditError_@item.BookId" style="color:red"></span>
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Price</span>
+                            @Html.EditorFor(itemModel => item.Price, new { htmlAttributes = new { @id = "priceEdit_" + @item.BookId } })
+                            @*<input class="col-sm-8" type="text" value="@item.Price" id="bookTitleEdit_@item.BookId" />*@
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="priceEditError_@item.BookId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Description</span>
+                            <input class="col-sm-8" type="text" value="@item.Description" id="descriptionEdit_@item.BookId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="descriptionEditError_@item.BookId" style="color:red"></span>
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Date of update</span>
+                            <input class="col-sm-8" type="date" value="@item.DateOfUpdate.ToString(string.Format("yyyy-MM-dd"))" id="dateOfUpdateEdit_@item.BookId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="dateOfUpdateEditError_@item.BookId" style="color:red"></span>
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Description</span>
+                            <input class="col-sm-8" type="text" value="@item.Description" id="descriptionEdit_@item.BookId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="descriptionEditError_@item.BookId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Image</span>
+                            <div class="form-inline">
+                                <input type="text" name="pictureEdit_@item.BookId" id="pictureEdit_@item.BookId" value="@item.Image" disabled />
+                                <input type="file" id="fileUploadEdit_@item.BookId" accept="image/*" name="fileUploadEdit_@item.BookId" style="display:none;" />
+                                <input type="button" id="btnUploadEdit_@item.BookId" value="..." class="btn btn-success" />
+                                <span><img id="pictureUploadEdit_@item.BookId" width="50" src="@Url.Content("/ImagesBook/"+item.Image)" /></span>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Stock</span>
+                            <input class="col-sm-8" type="text" value="@item.Stock" id="stockEdit_@item.BookId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="stockEditError_@item.BookId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Author</span>
+                            @Html.DropDownListFor(modelItem => item.AuthorId, new SelectList(ViewBag.AllAuthor, "AuthorId", "Name", item.AuthorId), new { @id = "authorEdit_" + item.BookId })
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="authorEditError_@item.BookId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Category</span>
+                            @Html.DropDownListFor(modelItem => item.CategoryId, new SelectList(ViewBag.AllCategory, "CategoryId", "Name", item.CategoryId), new { @id = "categoryEdit_" + item.BookId })
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="categoryEditError_@item.BookId" style="color:red"></span>
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Publisher</span>
+                            @Html.DropDownListFor(modelItem => item.PublisherId, new SelectList(ViewBag.AllPublisher, "PublisherId", "Name", item.PublisherId), new { @id = "publisherEdit_" + item.BookId });
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="publisherEditError_@item.BookId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Is New</span>
+                            @Html.EditorFor(itemModel => item.IsNew, new { htmlAttributes = new { @id = "isNewEdit_" + item.BookId } })
+                        </div>
+                        <br />
+
+                        @*<div class="col-sm-12">
+            <span class="col-sm-4">Author</span>
+            <input type="text" disabled />
+            <input type="button" value="LookUp" id="btnLookUpAuthorEdit_@item.BookId" />
+        </div>
+        <br />*@
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="btnConfirmEditBook_@item.BookId">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade rotate" id="myModalDeleteBook_@item.BookId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="modal-title text-center">Delete Book: @item.Title</h2>
+
+                    </div>
+                    <div class="container"></div>
+                    <div class="modal-body" id="myBodyDelete_@item.BookId">
+                        <h3>Do you want to delete Book with Title = @item.Title</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="btnConfirmDeleteBook_@item.BookId">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+       
+    }
+
+</table>
+<br />
+<div class="text-center">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>
+
+<div class="modal fade rotate" id="myModalCreate">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title text-center">Create Book</h2>
+
+            </div>
+            <div class="container"></div>
+            <div class="modal-body" id="myBodyCreate">
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Title</span>
+                    <input class="col-sm-8" type="text" id="title" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="titleError" style="color:red"></span>
+                </div>
+                <br />
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Price</span>
+                    <input class="col-sm-8" type="text" id="price" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="priceError" style="color:red"></span>
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Description</span>
+                    <input class="col-sm-8" type="text" id="description" />
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="descriptionError" style="color:red"></span>
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Date of Update</span>
+                    <input class="col-sm-8" type="date" id="dateOfUpdate" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="dateOfUpdateError" style="color:red"></span>
+                </div>
+                <br />
+
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Image</span>
+                    <div class="form-inline">
+                        <input type="text" name="picture" id="picture" disabled />
+                        <input type="file" id="fileUpload" accept="image/*" name="fileUpload" style="display:none;" />
+                        <input type="button" id="btnUpload" value="..." class="btn btn-success" />
+                        <span><img id="pictureUpload" width="50" /></span>
+                    </div>
+                </div>
+                <br />
+                <br />
+
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Stock</span>
+                    <input class="col-sm-8" type="text" id="stock" />
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="stockError" style="color:red"></span>
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Author</span>
+                    @Html.DropDownList("Author", new SelectList(ViewBag.AllAuthor, "AuthorId", "Name"), new { @id = "authorId", @class = "col-sm-8" })
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="authorIdError" style="color:red"></span>
+                </div>
+                <br />
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Category</span>
+                    @Html.DropDownList("Category", new SelectList(ViewBag.AllCategory, "CategoryId", "Name"), new { @id = "categoryId", @class = "col-sm-8" })
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="categoryIdError" style="color:red"></span>
+                </div>
+                <br />
+
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Publisher</span>
+                    @Html.DropDownList("Publisher", new SelectList(ViewBag.AllPublisher, "PublisherId", "Name"), new { @id = "publisherId", @class = "col-sm-8" })
+                </div>
+                <br />
+                <div class="col-sm-12">
+                    <span class="col-sm-4"></span>
+                    <span class="col-sm-8" id="publisherIdError" style="color:red"></span>
+                </div>
+                <br />
+
+
+
+
+                <div class="col-sm-12">
+                    <span class="col-sm-4">Is New</span>
+                    <input type="checkbox" id="isNew" />
+                </div>
+                <br />
+
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btnCreatePublisher">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#btnCreate").click(function () {
+            $("#myModalCreate").modal("show");
+            //Đăng ký sự kiện nút btnUpload
+            $("#btnUpload").click(function () {
+                $("#fileUpload").trigger('click');
+            });
+            //Bắt sự kiệm change data của fileUpload
+            $("#fileUpload").change(function () {
+                if (window.FormData !== undefined) {
+                    //Lấy dữ liệu trên fileUpload
+                    var fileUpload = $("#fileUpload").get(0);
+                    var files = fileUpload.files;
+                    //Tạo đối tượng formdata
+                    var formData = new FormData();
+                    //Đưa dữ liệu vào form
+                    formData.append('file', files[0]);
+                    $.ajax({
+                        type: "Post",
+                        url: "/Admin/Book/ProcessUpload",
+                        contentType: false,//Không có header
+                        processData: false,//Không xử lý dữ liệu
+                        data: formData,
+                        success: function (urlImage) {
+                            $("#pictureUpload").attr('src', "/ImagesBook/" + urlImage);
+                            $("#picture").val(urlImage);
+                        },
+                        error: function (err) {
+                            alert("Có lỗi" + err);
+                        }
+                    });
+                }
+
+            });
+
+            $("#btnCreatePublisher").click(function () {
+                //Lấy dữ liệu để gửi
+                var title = $("#title").val();
+                var price = $("#price").val();
+                var description = $("#description").val();
+                var dateOfUpdate = $("#dateOfUpdate").val();
+                var image = $("#picture").val();
+                var stock = $("#stock").val();
+                var authorId = $("#authorId").val();
+                var categoryId = $("#categoryId").val();
+                var publisherId = $("#publisherId").val();
+                var isNew = $("#isNew").is(':checked');
+                //Check dữ liệu
+                if (title == "") {
+                    $("#titleError").html("title can't be empty!");
+                    return;
+
+                }
+                if (dateOfUpdate == "") {
+                    $("#dateOfUpdateError").html("Date of update can't be empty!");
+                    return;
+
+                }
+                if (image == "") {
+                    $("#picture").val("Image can't be empty");
+                    return;
+
+                }
+                $.ajax({
+                    type: "Post",
+                    url: "/Admin/Book/Create",
+                    data: { title: title, price: price, description: description, dateOfUpdate: dateOfUpdate, image: image, stock: stock, authorId: authorId,categoryId: categoryId, publisherId: publisherId, isNew: isNew },
+                    success: function (response) {
+                        if (response == "successful") {
+                            $("#myModalCreate").modal("hide");
+                            alert("Insert successfully");
+                            window.location.href = "/Admin/Book/Index"
+                        } else {
+                            $("#myModalCreate").modal("hide");
+                            alert("Insert failed");
+                            window.location.href = "/Admin/Book/Index"
+                        }
+
+                    }
+                });
+            });
+        });
+
+
+
+    });
+
+    function Edit(bookId) {
+        $("#myModalEditBook_" + bookId).modal("show");
+
+
+        $("#btnUploadEdit_" + bookId).click(function () {
+            $("#fileUploadEdit_" + bookId).trigger('click');
+        });
+        //Bắt sự kiệm change data của fileUpload
+        $("#fileUploadEdit_" + bookId).change(function () {
+            if (window.FormData !== undefined) {
+                //Lấy dữ liệu trên fileUpload
+                var fileUpload = $("#fileUploadEdit_" + bookId).get(0);
+                var files = fileUpload.files;
+                //Tạo đối tượng formdata
+                var formData = new FormData();
+                //Đưa dữ liệu vào form
+                formData.append('file', files[0]);
+                $.ajax({
+                    type: "Post",
+                    url: "/Admin/Book/ProcessUploadEdit",
+                    contentType: false,//Không có header
+                    processData: false,//Không xử lý dữ liệu
+                    data: formData,
+                    success: function (urlImage) {
+                        $("#pictureUploadEdit_" + bookId).attr('src', "/ImagesBook/" + urlImage);
+                        $("#pictureEdit_" + bookId).val(urlImage);
+                    },
+                    error: function (err) {
+                        alert("Có lỗi" + err);
+                    }
+                });
+            }
+
+        });
+
+        $("#btnConfirmEditBook_" + bookId).click(function () {
+            title = $("#titleEdit_" + bookId).val();
+            price = $("#priceEdit_" + bookId).val();
+            description = $("#descriptionEdit_" + bookId).val();
+            dateOfUpdate = $("#dateOfUpdateEdit_" + bookId).val();
+            image = $("#pictureEdit_" + bookId).val();
+            stock = $("#stockEdit_" + bookId).val();
+            authorId = $("#authorEdit_" + bookId).val();
+            categoryId = $("#categoryEdit_" + bookId).val();
+            publisherId = $("#publisherEdit_" + bookId).val();
+            isNew = $("#isNewEdit_" + bookId).is(":checked")
+            if (title == "") {
+                $("#titleEditError_" + bookId).html("Title can't be empty");
+                return;
+            }
+            if (image == "") {
+                $("#pictureEdit_" + bookId).val("Image can't be empty");
+                return;
+            }
+            $.ajax({
+                type: "Post",
+                url: "/Admin/Book/Edit",
+                data: {
+                    bookId: bookId,
+                    title: title,
+                    price: price,
+                    description: description,
+                    dateOfUpdate: dateOfUpdate,
+                    image: image,
+                    stock: stock,
+                    authorId: authorId,
+                    categoryId: categoryId,
+                    publisherId: publisherId,
+                    isNew: isNew,
+                },
+                success: function (response) {
+                    if (response == "successful") {
+                        alert("Edit successfully");
+                        $("#myModalEditBook_" + bookId).modal("hide");
+                        window.location.href = "/Admin/Book/Index";
+                    } else {
+                        $("#myModalEditBook_" + bookId).modal("hide");
+                        alert("Edit failed");
+                    }
+                }
+            })
+        });
+
+        //$("#btnLookUpAuthorEdit_" + bookId).click(function () {
+        //    $("#myModalLookUp_" + bookId).modal("show");
+        //});
+    }
+
+    function Delete(bookId) {
+        $("#myModalDeleteBook_" + bookId).modal("show");
+        $("#btnConfirmDeleteBook_" + bookId).click(function () {
+            $.ajax({
+                type: "Post",
+                url: "/Admin/Book/Delete",
+                data: {
+                    bookId: bookId,
+                },
+                success: function (response) {
+                    if (response == "successful") {
+                        alert("Delete successfully");
+                        $("#myModalDeleteBook_" + bookId).modal("hide");
+                        window.location.href = "/Admin/Book/Index";
+                    } else {
+                        $("#myModalDeleteBook_" + bookId).modal("hide");
+                        alert("Delete failed");
+                        window.location.href = "/Admin/Book/Index";
+                    }
+                }
+            })
+        });
+    }
+
+
+</script>

@@ -1,0 +1,143 @@
+﻿@model IEnumerable<BS.Model.OrderDetail>
+@{
+    var tongTien = Model.Sum(x => x.Quantity * x.Book.Price);
+}
+
+<div class="modal-content">
+    <div class="modal-header text-center">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h1 class="modal-title" id="myModalLabel">Thông tin chi tiết</h1>
+        <h3>Tổng tiền =<span class="text text-danger"> @string.Format("{0:0,0}", tongTien) đ</span></h3>
+    </div>
+    <div class="modal-body">
+        <table class="table" id="myTableContent">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.BookId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.Author.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.Publisher.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.Image)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.Price)
+                </th>
+                <th>
+                    Thành tiền
+                </th>
+
+            </tr>
+
+            @foreach (var item in Model)
+            {
+            <tr id="@("orderdetail_"+item.OrderId + "_"+item.BookId)">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Book.BookId, new { htmlAttributes = new { @id = "bookId_" + item.BookId } })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Book.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Book.Author.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Book.Publisher.Name)
+                </td>
+
+                <td class="text-justify">
+                    <img src="@Url.Content("~/ImagesBook/"+item.Book.Image)" width="50" height="75" />
+                </td>
+                <td>
+                    @*@Html.EditorFor(modelItem => item.Quantity, new { @id = "MyId" })*@
+                    @Html.DisplayFor(itemModel => item.Quantity, new { htmlAttributes = new { @id = "quantity_" + item.Quantity } })
+
+                </td>
+                <td>
+                    @string.Format("{0:0,0}", item.Book.Price) đ
+                </td>
+                <td id="quang1">
+                    @string.Format("{0:0,0}", item.Quantity * item.Book.Price) đ
+                </td>
+            </tr>
+            }
+
+        </table>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        @*<button type="button" class="btn btn-primary" id="btnSaveChanges">Save changes</button>*@
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnSaveChanges").click(function () {
+            var items = [];
+            //var orderDetails;
+            $('#myTableContent tr').each(function () {
+                var item = {};
+                item.BookId = $(this).find("input[id*='bookId_']").val();
+                item.Quantity = $(this).find("input[id*='quantity_']").val();
+                items.push(item);
+            });
+            //orderDetails = JSON.stringify(items);
+            //alert(orderDetails);
+            $.ajax({
+                //!!changing your url
+                //url: './ReceivePOLines',
+                url: "/Admin/Order/ChangeListOrderDetail",
+                type: "Post",
+                async: false,
+                dataType: "json",
+                //data: JSON.stringify({ MyArray: items }),
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ orderDetails:items}) ,
+                //expecting back from server-need to remove since we are not getting back data from server
+                success: function () {
+                    //alerting success instead of opening window
+                    alert("success");
+                    //window.location.replace("../Home/Index");
+                },
+                error: function (request) {
+                    alert("error");
+                }
+            });
+        })
+
+    })
+
+
+                @*url: '@Url.Action("GetDocTorByDepart")',
+                type: 'POST',
+                async: false,
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ departName: departmentName }),
+                error: function (data) {
+                    console.log(data);
+                    alert("Lỗi!");
+                },
+                success: function (result) {
+                    var doctorSelect = $('[id="DoctorID"]');
+                    doctorSelect.empty();
+                    console.log(result);
+                    //var arr = new Array();
+                    for (var i = 0; i < result.length; i++) {
+                        doctorSelect.append("<option value='" + result[i].ID + "'>" + result[i].Name + "</option>");
+                    }
+                }*@
+</script>

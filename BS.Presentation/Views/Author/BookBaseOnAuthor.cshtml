@@ -1,0 +1,39 @@
+﻿@using BS.Model
+@model List<Book>
+@{
+    ViewBag.Title = "BookBaseOnAuthor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center text-primary">Danh mục sách của tác giả: <span style="color:red;">@ViewBag.AuthorName</span> </h2>
+<div class="section group">
+    @foreach (var item in Model)
+    {
+        <div class="grid_1_of_4 images_1_of_4">
+            <a href="@Url.Action("DetailBook","Book",new {@bookId = item.BookId })"><img src="@Url.Content("~/ImagesBook/"+item.Image)" alt=""></a>
+            @if (item.Title.Length > 40)
+            {
+                <h2>@item.Title.Substring(0, 40) ...</h2>
+            }
+            else
+            {
+
+                <h2>@item.Title</h2>
+            }
+
+            <div class="price-details">
+                <div class="price-number">
+                    <p><span class="rupees">@string.Format("{0:0,0}", item.Price) đ</span></p>
+                </div>
+                <div class="add-cart">
+                    <h4><a href="preview.html">Add to Cart</a></h4>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    }
+
+</div>
+
+

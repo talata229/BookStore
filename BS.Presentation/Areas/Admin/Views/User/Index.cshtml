@@ -1,0 +1,345 @@
+﻿@model PagedList.IPagedList<BS.Model.User>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Users";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2 class="text-center">Users</h2>
+
+@using (Html.BeginForm("Index", "User", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+<br />
+<table class="table table-bordered table-responsive">
+    <tr>
+        <th class="text-justify">
+            @Html.ActionLink("UserName", "Index", new { sortOrder = ViewBag.UserNameSortParm, currentFilter = ViewBag.CurrentFilter }, new { @class = "col-md-2" })
+        </th>
+        <th class="text-justify">
+            Password
+        </th>
+        <th>
+            @Html.ActionLink("FullName", "Index", new { sortOrder = ViewBag.FullNameParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>DateOfBirth</th>
+        <th>Gender</th>
+        <th>PhoneNumber</th>
+        <th>Email</th>
+        <th>
+            @Html.ActionLink("Address", "Index", new { sortOrder = ViewBag.AddressParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>IsActive</th>
+        <th></th>
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-justify">
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td class="text-justify">
+                @Html.DisplayFor(model => item.Password)
+            </td>
+            <td class="">
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td class="text-justify">
+                @*@Html.DisplayFor(modelItem => item.DateOfBirth)*@
+                @Html.ValueFor(model => item.DateOfBirth, "{0:MM/dd/yyyy}")
+            </td>
+
+            <td class="text-justify">
+                @if (item.Gender == 1)
+                {
+                    @Html.Label("Male")
+                }
+                else if (item.Gender == 0)
+                {
+                    @Html.Label("Female")
+                }
+                else
+                {
+                    @Html.Label("Other")
+                }
+
+            </td>
+
+            <td class="text-justify">
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
+            </td>
+
+            <td class="text-justify">
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+
+            <td class="text-justify">
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td class="text-justify">
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td class="text-justify">
+                <a href="#" class="btn btn-primary" onclick="Edit(@item.UserId)"><i class="far fa-edit"></i> Edit</a>
+                <a href="#" class="btn btn-danger" onclick="Delete(@item.UserId)"><i class="far fa-trash-alt"></i> Delete</a>
+                @*<a href="#" class="btn btn-info" onclick="Detail(@item.UserId)"><i class="fas fa-info-circle"></i> Detail</a>*@
+            </td>
+        </tr>
+
+        <div class="modal fade rotate" id="myModalEditUser_@item.UserId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="modal-title text-center">Edit User: @item.UserName</h2>
+                    </div>
+                    <div class="container"></div>
+                    <div class="modal-body" id="myBodyEdit_@item.UserId">
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">UserName</span>
+                            <input class="col-sm-8" type="text" value="@item.UserName" id="userNameEdit_@item.UserId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="userNameEditError_@item.UserId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Password</span>
+                            <input class="col-sm-8" type="text" value="@item.Password" id="passwordEdit_@item.UserId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="passwordEditError_@item.UserId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Name</span>
+                            <input class="col-sm-8" type="text" value="@item.Name" id="nameEdit_@item.UserId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="nameEditError_@item.UserId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Date of Birth</span>
+                            <input class="col-sm-8" type="date" value="@item.DateOfBirth.ToString(string.Format("yyyy-MM-dd"))" id="dateOfBirthEdit_@item.UserId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="dateOfBirthEditError_@item.UserId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4" id="genderEdit_item.UserId">Gender</span>
+                            @*<input class="col-sm-8" type="text" value="@item.Gender" id="genderEdit_@item.UserId" />*@
+                            @Html.DropDownListFor(modelItem => item.Gender, new List<SelectListItem> { new SelectListItem { Text = "Male", Value = 1.ToString() }, new SelectListItem { Text = "Female", Value = 0.ToString() }, new SelectListItem { Text = "Other", Value = 2.ToString() } }, new { @id = "genderEdit_" + item.UserId })
+                            @*@Html.DropDownListFor(modelItem => item.Gender, new SelectList(new List<Object> { new { value = 0, text = "Female" }, new { value = 1, text = "Male" }, new { value = 2, text = "Other" } }, "value", "text"))*@
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="genderEditError_@item.UserId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Phone Number</span>
+                            <input class="col-sm-8" type="text" value="@item.PhoneNumber" id="phoneNumberEdit_@item.UserId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="phoneNumberEditError_@item.UserId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Email</span>
+                            <input class="col-sm-8" type="text" value="@item.Email" id="emailEdit_@item.UserId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="emailEditError_@item.UserId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Address</span>
+                            <input class="col-sm-8" type="text" value="@item.Address" id="addressEdit_@item.UserId" />
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="addressEditError_@item.UserId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4">Is Active</span>
+                            @Html.EditorFor(modelItem => item.IsActive, new { htmlAttributes = new {@id = "isActiveEdit_" + item.UserId } })
+                        </div>
+                        <br />
+
+                        <div class="col-sm-12">
+                            <span class="col-sm-4"></span>
+                            <span class="col-sm-8" id="isActiveEditError_@item.UserId" style="color:red"></span>
+                        </div>
+                        <br />
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="btnConfirmEditUser_@item.UserId">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="modal fade rotate" id="myModalDeleteUser_@item.UserId">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="modal-title text-center">Delete User: @item.Name</h2>
+
+                    </div>
+                    <div class="container"></div>
+                    <div class="modal-body" id="myBodyDelete_@item.UserId">
+                        <h3>Do you want to delete User = @item.Name</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="btnConfirmDeleteUser_@item.UserId">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+    }
+
+</table>
+<br />
+<div class="text-center">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>
+
+<script>
+    $(document).ready(function () {
+    });
+
+    function Edit(userId) {
+        $("#myModalEditUser_" + userId).modal("show");
+        $("#btnConfirmEditUser_" + userId).click(function () {
+            userName = $("#userNameEdit_" + userId).val();
+            password = $("#passwordEdit_" + userId).val();
+            name = $("#nameEdit_" + userId).val();
+            dateOfBirth = $("#dateOfBirthEdit_" + userId).val();
+            gender = $("#genderEdit_" + userId).val();
+            phoneNumber = $("#phoneNumberEdit_" + userId).val();
+            email = $("#emailEdit_" + userId).val();
+            address = $("#addressEdit_" + userId).val();
+            isActive = $("#isActiveEdit_" + userId).is(":checked")
+            $.ajax({
+                type: "Post",
+                url: "/Admin/User/Edit",
+                data: {
+                    userId: userId,
+                    userName: userName,
+                    password: password,
+                    name: name,
+                    dateOfBirth: dateOfBirth,
+                    gender: gender,
+                    phoneNumber: phoneNumber,
+                    email: email,
+                    address: address,
+                    isActive: isActive,
+                },
+                success: function (response) {
+                    if (response == "successful") {
+                        alert("Edit successfully");
+                        $("#myModalEditUser_" + userId).modal("hide");
+                        window.location.href = "/Admin/User/Index";
+                    } else {
+                        $("#myModalEditUser_" + userId).modal("hide");
+                        alert("Edit failed");
+                    }
+                }
+            })
+        });
+    }
+
+    function Delete(userId) {
+        $("#myModalDeleteUser_" + userId).modal("show");
+        $("#btnConfirmDeleteUser_" + userId).click(function () {
+            $.ajax({
+                type: "Post",
+                url: "/Admin/User/Delete",
+                data: {
+                    userId: userId,
+                },
+                success: function (response) {
+                    if (response == "successful") {
+                        alert("Delete successfully");
+                        $("#myModalDeletePublisher_" + userId).modal("hide");
+                        window.location.href = "/Admin/User/Index";
+                    } else {
+                        $("#myModalDeletePublisher_" + userId).modal("hide");
+                        alert("Delete failed");
+                    }
+                }
+            })
+        });
+    }
+
+</script>
